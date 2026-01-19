@@ -1,35 +1,22 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
+import { CustomTabBar, Tab } from "@/src/components/custom-tab-bar";
+import { AnimatedScrollListProvider } from "@/src/providers/animated-scroll-list-provider";
+import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
+import { Tabs } from "expo-router";
 
-import { HapticTab } from '@/components/haptic-tab';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
-
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
+export default function TabsRootLayout() {
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
-      }}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+    <AnimatedScrollListProvider>
+      <Tabs
+        screenOptions={{
+          headerShown: false,
+          tabBarShowLabel: false,
         }}
-      />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-        }}
-      />
-    </Tabs>
+        tabBar={(props: BottomTabBarProps) => <CustomTabBar {...props} />}
+      >
+        <Tabs.Screen name={Tab.Habits} />
+        <Tabs.Screen name={Tab.Streaks} />
+        <Tabs.Screen name={Tab.AddHabit} />
+      </Tabs>
+    </AnimatedScrollListProvider>
   );
 }

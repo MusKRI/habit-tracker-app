@@ -1,17 +1,19 @@
-import { AllHabits, CustomHabitsHeader } from "@/src/components/habits-screen";
-import { AddHabitBtn } from "@/src/components/habits-screen/add-habit-btn";
+import {
+  StreaksContent,
+  StreaksCustomHeader,
+} from "@/src/components/streaks-screen";
 import { client, DATABASE_ID } from "@/src/lib/appwrite";
 import { useAuth } from "@/src/lib/auth-context";
-import { getAllHabits, getTodayCompletions } from "@/src/services/queries";
-import { Habit } from "@/src/types/habit";
+import { getAllCompletions, getAllHabits } from "@/src/services/queries";
+import { Habit, HabitCompletion } from "@/src/types/habit";
 import { useCallback, useEffect, useState } from "react";
 import { View } from "react-native";
 
-export default function Index() {
+export default function MeetScreen() {
   const { user } = useAuth();
 
   const [habits, setHabits] = useState<Habit[]>([]);
-  const [completedHabits, setCompletedHabits] = useState<string[]>([]);
+  const [completedHabits, setCompletedHabits] = useState<HabitCompletion[]>([]);
 
   const loadHabits = useCallback(async () => {
     if (user) {
@@ -22,8 +24,8 @@ export default function Index() {
 
   const loadCompletedHabits = useCallback(async () => {
     if (user) {
-      const completedHabits = await getTodayCompletions(user.$id);
-      setCompletedHabits(completedHabits.map((ch) => ch.habit_id) ?? []);
+      const completedHabits = await getAllCompletions(user.$id);
+      setCompletedHabits(completedHabits ?? []);
     }
   }, [user]);
 
@@ -63,15 +65,10 @@ export default function Index() {
     }
   }, [user]);
 
-  const totalHabits = habits.length;
-
-  console.log("today completed", completedHabits);
-
   return (
-    <View className="flex-1 bg-background">
-      <CustomHabitsHeader totalHabits={totalHabits} />
-      <AllHabits habits={habits} completedHabits={completedHabits} />
-      <AddHabitBtn />
+    <View className="flex-1 bg-background text-foreground">
+      <StreaksCustomHeader />
+      <StreaksContent habits={habits} completedHabits={completedHabits} />
     </View>
   );
 }
